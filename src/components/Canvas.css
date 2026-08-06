@@ -1,0 +1,50 @@
+body {
+     font-family: 'Bitcount Prop Single','Roboto', sans-serif;
+}
+
+canvas {
+    aspect-ratio: 1/1;
+    background-color: #e7e2db;
+    height: 90%;
+    touch-action: none;
+}
+
+.canvas-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    align-items: center;
+}
+
+.btns {
+    position: absolute;
+    right: 1vh;
+    top: 1vh;
+}
+
+.btn {
+    margin: 4px;
+    padding: 3px 12px;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-family: 'Bitcount Prop Single','Roboto', sans-serif;
+}
+
+.pretty-border {
+    border: 1px solid #856389eb;
+    border-radius: 10px;
+}
+
+#trash-btn {
+    padding-bottom: 0px;
+    border: 1px solid black;
+    background-color: #e7e2db;
+}
+
+#check-btn {
+    background-color: #e7e2db;
+    width: 100%;
+    padding: 1vh 0;
+    font-size: 20px;
+}
