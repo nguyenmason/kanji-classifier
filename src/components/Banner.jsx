@@ -7,7 +7,7 @@ export default function Banner({ currentPage = "home" }) {
   const navigate = useNavigate();
 
   return (
-    <>
+    <div>
       <header className="banner">
         <span className="banner-name" onClick={() => navigate("/")}>
           Kanji Classifier
@@ -17,6 +17,6 @@ export default function Banner({ currentPage = "home" }) {
           
         </nav>
       </header>
-    </>
+    </div>
   );
 }
