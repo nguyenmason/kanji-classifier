@@ -65,7 +65,7 @@ export default function Canvas() {
         drawingSpace.addEventListener('contextmenu', (e) => e.preventDefault()); //to stop menu from showing up when erasing
         
         trashBtn.addEventListener("click", clear);
-        submitBtn.addEventListener("click", submit);
+        submitBtn.addEventListener("click", predict);
 
     }, []);
 
