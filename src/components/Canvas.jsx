@@ -118,7 +118,7 @@ export default function Canvas() {
     async function predict() {
         const drawingSpace = drawingSpaceRef.current;
         const img = drawingSpace.toDataURL();
-        const base64image = img.split(',')[1];
+        const base64Image = img.split(',')[1];
 
         try {
             const response = await fetch('/api/predict', {
