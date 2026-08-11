@@ -1,6 +1,7 @@
 import './Canvas.css';
 import {GrCheckmark, GrTrash} from 'react-icons/gr';
 import {useRef, useEffect, useState} from 'react';
+import {predictKanji} from '../../api/predict.js'; 
 
 export default function Canvas() {
     const drawingSpaceRef = useRef(null);
@@ -25,7 +26,7 @@ export default function Canvas() {
             if (!isDrawing.current) return;
             const pos = getPos(e);
             
-            //saving stoke path for erasing
+            // saving stoke path for erasing
             currStroke.current.push(pos);
 
             //drawing
@@ -114,11 +115,36 @@ export default function Canvas() {
         
     }
 
-    const submit = () => {
+    async function predict() {
         const drawingSpace = drawingSpaceRef.current;
-        const img = drawingSpace.toDataURL()
-        console.log(img);
-        //send predict reuest to server but i gotta make that...
+        const img = drawingSpace.toDataURL();
+        const base64image = img.split(',')[1];
+
+        try {
+            const response = await fetch('/api/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image: base64Image })
+            });
+
+            if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Prediction failed:', response.status, errorData);
+            // show user-facing error, e.g. "Something went wrong, try again"
+            return;
+            }
+
+            const data = await response.json();
+            // data.predictions, data.probabilities — from your Lambda's response shape
+            console.log(data.predictions, data.probabilities);
+            return data;
+
+        } catch (err) {
+            // network failure, not an HTTP error — fetch throws for these
+            console.error('Network error:', err);
+        }
     }
 
     const eraseAtPoint = (e) => {
