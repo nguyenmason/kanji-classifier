@@ -7,7 +7,10 @@ export default function Canvas() {
     const drawingSpaceRef = useRef(null);
     const trashBtnRef = useRef(null);
     const submitBtnRef = useRef(null);
+
     let isDrawing = useRef(false);
+    const [isLoading, setLoading] = useState(false);
+
     let currStroke = useRef([]);
     const [strokes, setStrokes] = useState([]);
 
@@ -78,6 +81,16 @@ export default function Canvas() {
         redraw(strokes);  
     }, [strokes]);
 
+    useEffect(() => {
+        const drawingSpace = drawingSpaceRef.current;
+        const context = drawingSpace.context;
+        if (isLoading) {
+            context.drawImage('/images/loading.jpg',0,0, drawingSpace.width, drawingSpace.height)
+        } else {
+            redraw(strokes);  
+        }
+    }, [isLoading]);
+
     const getPos = (e) => {
         const drawingSpace = drawingSpaceRef.current;
         const boundingRect = drawingSpace.getBoundingClientRect();
@@ -119,8 +132,8 @@ export default function Canvas() {
         const drawingSpace = drawingSpaceRef.current;
         const img = drawingSpace.toDataURL();
         const base64Image = img.split(',')[1];
-
         try {
+            setLoading(true);
             const response = await fetch('/api/predict', {
             method: 'POST',
             headers: {
@@ -139,6 +152,7 @@ export default function Canvas() {
             const data = await response.json();
             // data.predictions, data.probabilities — from your Lambda's response shape
             console.log(data.predictions, data.probabilities);
+            setLoading(false);
             return data;
 
         } catch (err) {
@@ -169,11 +183,16 @@ export default function Canvas() {
 
     return (
         <div className="canvas-wrapper">
-            <canvas ref={drawingSpaceRef} className="canvas pretty-border"></canvas>
-            <div className="btns">
-                <button className="btn pretty-border" ref={trashBtnRef} id="trash-btn"><GrTrash size={18}/></button>
+            <div>
+                <canvas ref={drawingSpaceRef} className="canvas pretty-border"></canvas>
+                <div className="btns">
+                    <button className="btn pretty-border" ref={trashBtnRef} id="trash-btn"><GrTrash size={18}/></button>
+                </div>
+                <button className="btn pretty-border" ref={submitBtnRef} id="check-btn">Check</button>
             </div>
-            <button className="btn pretty-border" ref={submitBtnRef} id="check-btn">Check</button>
+            <div>
+
+            </div>
         </div>
     );
 }
