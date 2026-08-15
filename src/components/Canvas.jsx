@@ -6,9 +6,10 @@ export default function Canvas({handleSubmit}) {
     const drawingSpaceRef = useRef(null);
     const trashBtnRef = useRef(null);
     const submitBtnRef = useRef(null);
+    const loadingImgRef = useRef(null);
 
     let isDrawing = useRef(false);
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     let currStroke = useRef([]);
     const [strokes, setStrokes] = useState([]);
@@ -17,6 +18,13 @@ export default function Canvas({handleSubmit}) {
         const drawingSpace = drawingSpaceRef.current;
         const trashBtn = trashBtnRef.current;
         const submitBtn = submitBtnRef.current;
+        
+        // load loadingImage for later use
+        const img = new Image();
+        img.src = '/images/loading.jpg';
+        img.onload = () => {
+            loadingImgRef.current = img;
+        };
 
         const startLine = (e) => {
             isDrawing.current = true;
@@ -82,11 +90,11 @@ export default function Canvas({handleSubmit}) {
 
     useEffect(() => {
         const drawingSpace = drawingSpaceRef.current;
-        const context = drawingSpace.context;
-        if (isLoading) {
-            context.drawImage('/images/loading.jpg',0,0, drawingSpace.width, drawingSpace.height)
+        const context = drawingSpace.getContext('2d');
+        if (loadingImgRef.current && isLoading) {
+            context.drawImage(loadingImgRef.current,0,0, drawingSpace.width, drawingSpace.height);
         } else {
-            redraw(strokes);  
+            redraw(strokes);
         }
     }, [isLoading]);
 
@@ -128,14 +136,18 @@ export default function Canvas({handleSubmit}) {
     }
 
     async function predict() {
-        setLoading(true);
+        setIsLoading(true);
+        console.log('hello vro');
 
         const drawingSpace = drawingSpaceRef.current;
         const img = drawingSpace.toDataURL();
         const base64Image = img.split(',')[1];
-        handleSubmit(base64Image);
+        try {
+            await handleSubmit(base64Image);
+        } finally {
+            setIsLoading(false);
+        }
 
-        setLoading(false);
     }
 
     const eraseAtPoint = (e) => {
