@@ -15,9 +15,19 @@ body {
 }
 
 main {
-    display: flex;
-    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
     justify-content: center;
-    padding: 2.5em;
+    padding: 1vh 0;
+}
+
+#canvas {
+    grid-column: 2;
+}
+
+#results {
+    display: flex;
+    flex-direction: column;
+    grid-column: 3;
 }

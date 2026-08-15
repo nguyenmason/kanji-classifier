@@ -35,3 +35,5 @@ lerna-debug.log*
 # Cache
 .cache/
 *.cache
+.vercel
+.env*

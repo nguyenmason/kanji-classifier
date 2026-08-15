@@ -1,9 +1,8 @@
 import './Canvas.css';
 import {GrCheckmark, GrTrash} from 'react-icons/gr';
 import {useRef, useEffect, useState} from 'react';
-import {predictKanji} from '../../api/predict.js'; 
 
-export default function Canvas() {
+export default function Canvas({handleSubmit}) {
     const drawingSpaceRef = useRef(null);
     const trashBtnRef = useRef(null);
     const submitBtnRef = useRef(null);
@@ -129,36 +128,14 @@ export default function Canvas() {
     }
 
     async function predict() {
+        setLoading(true);
+
         const drawingSpace = drawingSpaceRef.current;
         const img = drawingSpace.toDataURL();
         const base64Image = img.split(',')[1];
-        try {
-            setLoading(true);
-            const response = await fetch('/api/predict', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ image: base64Image })
-            });
+        handleSubmit(base64Image);
 
-            if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Prediction failed:', response.status, errorData);
-            // show user-facing error, e.g. "Something went wrong, try again"
-            return;
-            }
-
-            const data = await response.json();
-            // data.predictions, data.probabilities — from your Lambda's response shape
-            console.log(data.predictions, data.probabilities);
-            setLoading(false);
-            return data;
-
-        } catch (err) {
-            // network failure, not an HTTP error — fetch throws for these
-            console.error('Network error:', err);
-        }
+        setLoading(false);
     }
 
     const eraseAtPoint = (e) => {
@@ -183,16 +160,11 @@ export default function Canvas() {
 
     return (
         <div className="canvas-wrapper">
-            <div>
-                <canvas ref={drawingSpaceRef} className="canvas pretty-border"></canvas>
-                <div className="btns">
-                    <button className="btn pretty-border" ref={trashBtnRef} id="trash-btn"><GrTrash size={18}/></button>
-                </div>
-                <button className="btn pretty-border" ref={submitBtnRef} id="check-btn">Check</button>
+            <canvas ref={drawingSpaceRef} className="canvas pretty-border"></canvas>
+            <div className="btns">
+                <button className="btn pretty-border" ref={trashBtnRef} id="trash-btn"><GrTrash size={18}/></button>
             </div>
-            <div>
-
-            </div>
+            <button className="btn pretty-border" ref={submitBtnRef} id="check-btn">Check</button>
         </div>
     );
 }
