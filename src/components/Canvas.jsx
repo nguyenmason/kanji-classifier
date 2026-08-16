@@ -164,8 +164,9 @@ export default function Canvas({handleSubmit}) {
     };
 
     const clear = () => {
-        setStrokes([]);
-        console.log(strokes)
+        if(!isLoading) {
+            setStrokes([]);
+        }
     }
 
     const contextMenuHandler = (e) => e.preventDefault();
